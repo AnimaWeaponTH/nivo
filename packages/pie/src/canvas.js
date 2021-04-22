@@ -44,6 +44,9 @@ export const drawRadialLabels = (
         linkHorizontalLength,
         linkStrokeWidth,
         textXOffset,
+        textWidth,
+        textHeight,
+        disableOverlap,
         getTextColor,
         getLinkColor,
         theme,
@@ -57,6 +60,9 @@ export const drawRadialLabels = (
         linkDiagonalLength,
         linkHorizontalLength,
         textXOffset,
+        textWidth,
+        textHeight,
+        disableOverlap,
     })
 
     ctx.textBaseline = 'middle'

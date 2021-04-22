@@ -28,6 +28,9 @@ export default class PieRadialLabels extends Component {
         linkHorizontalLength: PropTypes.number.isRequired,
         linkStrokeWidth: PropTypes.number.isRequired,
         textXOffset: PropTypes.number.isRequired,
+        textWidth: PropTypes.number.isRequired,
+        textHeight: PropTypes.number.isRequired,
+        disableOverlap: PropTypes.bool.isRequired,
         textColor: PropTypes.func.isRequired,
         linkColor: PropTypes.func.isRequired,
         theme: PropTypes.shape({
@@ -43,6 +46,9 @@ export default class PieRadialLabels extends Component {
         linkHorizontalLength: 24,
         linkStrokeWidth: 1,
         textXOffset: 6,
+        textWidth: 100,
+        textHeight: 25,
+        disableOverlap: false,
     }
 
     render() {
@@ -56,6 +62,9 @@ export default class PieRadialLabels extends Component {
             linkHorizontalLength,
             linkStrokeWidth,
             textXOffset,
+            textWidth,
+            textHeight,
+            disableOverlap,
             textColor,
             linkColor,
             theme,
@@ -69,6 +78,9 @@ export default class PieRadialLabels extends Component {
             linkDiagonalLength,
             linkHorizontalLength,
             textXOffset,
+            textWidth,
+            textHeight,
+            disableOverlap,
         })
 
         return labels.map(label => (

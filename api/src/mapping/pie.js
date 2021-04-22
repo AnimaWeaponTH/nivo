@@ -38,6 +38,9 @@ module.exports = {
             radialLabelsLinkHorizontalLength: Joi.number(),
             radialLabelsLinkStrokeWidth: Joi.number().min(0),
             radialLabelsLinkColor: inheritedColor,
+            radialLabelsDisableOverlap: Joi.boolean(),
+            radialLabelsTextWidth: Joi.number(),
+            radialLabelsTextHeight: Joi.number(),
 
             enableSlicesLabels: Joi.boolean(),
             sliceLabel: Joi.string(),

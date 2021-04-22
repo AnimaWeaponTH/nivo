@@ -67,6 +67,9 @@ class Pie extends Component {
             radialLabelsLinkHorizontalLength,
             radialLabelsLinkStrokeWidth,
             radialLabelsTextXOffset,
+            radialLabelsTextWidth,
+            radialLabelsTextHeight,
+            radialLabelsDisableOverlap,
             radialLabelsTextColor,
             radialLabelsLinkColor,
 
@@ -157,6 +160,9 @@ class Pie extends Component {
                                                 }
                                                 linkStrokeWidth={radialLabelsLinkStrokeWidth}
                                                 textXOffset={radialLabelsTextXOffset}
+                                                textWidth={radialLabelsTextWidth}
+                                                textHeight={radialLabelsTextHeight}
+                                                disableOverlap={radialLabelsDisableOverlap}
                                                 textColor={getInheritedColorGenerator(
                                                     radialLabelsTextColor,
                                                     theme

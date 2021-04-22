@@ -58,6 +58,9 @@ const initialProperties = {
     radialLabelsLinkHorizontalLength: 24,
     radialLabelsLinkStrokeWidth: 1,
     radialLabelsLinkColor: { from: 'color' },
+    radialLabelsDisableOverlap: false,
+    radialLabelsTextWidth: 100,
+    radialLabelsTextHeight: 25,
 
     enableSlicesLabels: true,
     sliceLabel: 'value',
