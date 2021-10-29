@@ -70,7 +70,7 @@
     "react-dom": "16.8.6"
   },
   "scripts": {
-    "postinstall": "mkdir nivo; cd nivo; git init; git remote add -f origin https://github.com/AnimaWeaponTH/nivo.git; git config core.sparseCheckout true; echo \"packages/pie\" >> .git/info/sparse-checkout; git pull --depth=1 origin v.0.59.4; cd ..; npm i ./nivo/packages/pie/",
+    "postinstall": "mkdir nivo; cd nivo; git init; git remote add -f origin https://github.com/AnimaWeaponTH/nivo.git; git config core.sparseCheckout true; echo \"packages/pie\" >> .git/info/sparse-checkout; git pull --depth=1 origin v0.59.5; cd ..; npm i ./nivo/packages/pie/",
     "changelog": "rm CHANGELOG.md && node scripts/generate-changelog.js"
   },
   "workspaces": [

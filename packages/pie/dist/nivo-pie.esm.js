@@ -1,5 +1,5 @@
 /* eslint-disable */
-// "@nivo/pie": "0.59.4",
+// "@nivo/pie": "0.59.5",
 import React, { Component, Fragment, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { arc, pie, line } from 'd3-shape';
