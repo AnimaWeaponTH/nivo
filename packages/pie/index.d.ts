@@ -3,7 +3,7 @@ import { Box, Dimensions, Theme, MotionProps, ColorProps, SvgDefsAndFill } from 
 import { OrdinalColorsInstruction, InheritedColorProp } from '@nivo/colors'
 import { LegendProps } from '@nivo/legends'
 
-declare module '@nivo/pie' {
+declare module '@pic-nivo/pie' {
     export interface PieDatum {
         id: string | number
         value: number
