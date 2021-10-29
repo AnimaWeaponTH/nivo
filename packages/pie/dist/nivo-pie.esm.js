@@ -743,7 +743,7 @@ function fixOverlapLabel(arcList, sign, limitY, _ref) {
     prevData = arr[i - 1];
     data.isOverlap = isMultiCollide(data, ...arr);
     if (data.isOverlap) {
-      if (prevData) {
+      if (prevData && prevData.isOverlap) {
         data.position.y = prevData.position.y + (textHeight + 1) * sign;
         data.line[2].y = prevData.line[2].y + (textHeight + 1) * sign;
         fixOverlapPie(data, sign, _ref);
@@ -761,7 +761,10 @@ function fixOverlapLabel(arcList, sign, limitY, _ref) {
       if (index === arcList.length - 1) {
         data.position.y -= overLimit;
         data.line[2].y -= overLimit;
-      } else {
+      } else if (
+        overlapList.indexOf(data) > -1 ||
+        isMultiCollide(data, ...arcList)
+      ) {
         prevData = arcList[index + 1];
         data.position.y = prevData.position.y - (textHeight + 1) * sign;
         data.line[2].y = prevData.line[2].y - (textHeight + 1) * sign;
