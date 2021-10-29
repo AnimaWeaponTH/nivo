@@ -1,5 +1,5 @@
 /* eslint-disable */
-// "@nivo/pie": "0.59.1",
+// "@nivo/pie": "0.59.2",
 import React, { Component, Fragment, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { arc, pie, line } from 'd3-shape';
@@ -706,47 +706,17 @@ var computeRadialLabels = function computeRadialLabels(arcs, _ref) {
         arc: arc,
         text: getLabel(arc.data),
         position: labelPosition,
+        area: {
+          width: textWidth,
+          height: textHeight,
+        },
         align: textAlign,
         line: [positionA, positionB, positionC],
       };
 
       if (textAlign == 'left') {
-        if (leftList.length > 0) {
-          const ldata = leftList[leftList.length - 1];
-          data.isOverlap = isCollide(
-            {
-              x: ldata.position.x,
-              y: ldata.position.y,
-              widht: textWidth,
-              height: textHeight,
-            },
-            {
-              x: data.position.x,
-              y: data.position.y,
-              widht: textWidth,
-              height: textHeight,
-            },
-          );
-        }
         leftList.push(data);
       } else {
-        if (rightList.length > 0) {
-          const rdata = rightList[rightList.length - 1];
-          data.isOverlap = isCollide(
-            {
-              x: rdata.position.x,
-              y: rdata.position.y,
-              widht: textWidth,
-              height: textHeight,
-            },
-            {
-              x: data.position.x,
-              y: data.position.y,
-              widht: textWidth,
-              height: textHeight,
-            },
-          );
-        }
         rightList.push(data);
       }
 
@@ -763,95 +733,41 @@ var computeRadialLabels = function computeRadialLabels(arcs, _ref) {
   return radialLabels;
 };
 
-function fixOverlapLabel(arcList, sign, limitY, _ref, endRecursive) {
-  const { textHeight, textWidth } = _ref;
+function fixOverlapLabel(arcList, sign, limitY, _ref) {
+  const { textHeight } = _ref;
   let prevData;
-  let nextData;
   let overLimit = 0;
   let overlapList = [];
 
-  arcList.map(function(data, i, arr) {
+  arcList.forEach(function(data, i, arr) {
     prevData = arr[i - 1];
-    nextData = arr[i + 1];
-    if (prevData && data.isOverlap) {
-      data.position.y = prevData.position.y + (textHeight + 1) * sign;
-      data.line[2].y = prevData.line[2].y + (textHeight + 1) * sign;
-      fixOverlapPie(data, sign, _ref);
-      if (nextData && !nextData.isOverlap) {
-        nextData.isOverlap = isCollide(
-          {
-            x: data.position.x,
-            y: data.position.y,
-            widht: textWidth,
-            height: textHeight,
-          },
-          {
-            x: nextData.position.x,
-            y: nextData.position.y,
-            widht: textWidth,
-            height: textHeight,
-          },
-        );
+    data.isOverlap = isMultiCollide(data, ...arr);
+    if (data.isOverlap) {
+      if (prevData) {
+        data.position.y = prevData.position.y + (textHeight + 1) * sign;
+        data.line[2].y = prevData.line[2].y + (textHeight + 1) * sign;
+        fixOverlapPie(data, sign, _ref);
+        overLimit = data.line[2].y - limitY;
       }
-      overLimit =
-        data.line[2].y - limitY - (endRecursive ? textHeight * sign * 0.5 : 0);
       overlapList.push(data);
-    } else {
-      overlapList = [data];
     }
     return data;
   });
 
   if ((sign === 1 && overLimit > 0) || (sign === -1 && overLimit < 0)) {
-    let index = overlapList.length - 1;
+    let index = arcList.length - 1;
     while (index >= 0) {
-      const data = overlapList[index];
-      data.position.y -= overLimit;
-      data.line[2].y -= overLimit;
+      const data = arcList[index];
+      if (index === arcList.length - 1) {
+        data.position.y -= overLimit;
+        data.line[2].y -= overLimit;
+      } else {
+        prevData = arcList[index + 1];
+        data.position.y = prevData.position.y - (textHeight + 1) * sign;
+        data.line[2].y = prevData.line[2].y - (textHeight + 1) * sign;
+      }
       fixOverlapPie(data, sign, _ref);
       index -= 1;
-    }
-
-    if (!endRecursive) {
-      let isOverlap = false;
-      let isFixAgain = false;
-      arcList.map(function(data, i, arr) {
-        prevData = arr[i - 1];
-        nextData = arr[i + 1];
-        isOverlap = isCollide(
-          {
-            x: data.position.x,
-            y: data.position.y,
-            widht: textWidth,
-            height: textHeight,
-          },
-          prevData
-            ? {
-                x: prevData.position.x,
-                y: prevData.position.y,
-                widht: textWidth,
-                height: textHeight,
-              }
-            : null,
-          nextData
-            ? {
-                x: nextData.position.x,
-                y: nextData.position.y,
-                widht: textWidth,
-                height: textHeight,
-              }
-            : null,
-        );
-        if (isOverlap) {
-          data.isOverlap = isOverlap;
-          isFixAgain = true;
-        }
-        return data;
-      });
-
-      if (isFixAgain) {
-        fixOverlapLabel(arcList, sign, limitY, _ref, true);
-      }
     }
   }
 }
@@ -876,7 +792,42 @@ function getDistance(x, y, isNegative = false) {
   return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) * (isNegative ? -1 : 1));
 }
 
-function isCollide(a, b, c) {
+function isMultiCollide(arc, ...arcList) {
+  if (!arc) {
+    return false;
+  }
+
+  let hit = false;
+  if (arcList && arcList.length > 0) {
+    const rectList = arcList.map(function(data, i) {
+      return data
+        ? {
+            x: data.position.x,
+            y: data.position.y,
+            width: data.area.width,
+            height: data.area.height,
+          }
+        : null;
+    });
+
+    for (let i = 0; i < arcList.length; i++) {
+      const rect = {
+        x: arc.position.x,
+        y: arc.position.y,
+        width: arc.area.width,
+        height: arc.area.height,
+      };
+      if (arc !== arcList[i] && isCollide(rect, rectList[i])) {
+        hit = true;
+        break;
+      }
+    }
+  }
+
+  return hit;
+}
+
+function isCollide(a, b) {
   if (!a) {
     return false;
   }
@@ -888,15 +839,7 @@ function isCollide(a, b, c) {
       a.x + a.width < b.x ||
       a.x > b.x + b.width
     );
-  const ac =
-    !!c &&
-    !(
-      a.y + a.height < c.y ||
-      a.y > c.y + c.height ||
-      a.x + a.width < c.x ||
-      a.x > c.x + c.width
-    );
-  return ab || ac;
+  return ab;
 }
 
 function _typeof$1(obj) {
